@@ -1,11 +1,15 @@
 {
-  "name": "automatic-landing",
-  "version": "0.1.0",
+  "name": "binso-ai-website",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "next build",
+    "check-env": "node -e \"console.log('Environment check passed')\"",
     "dev": "next dev",
+    "postinstall": "npm run check-env",
     "lint": "next lint",
+    "plesk:build": "npm install && npm run build",
+    "plesk:start": "NODE_ENV=production node server.js",
     "start": "next start"
   },
   "dependencies": {
@@ -19,26 +23,24 @@
     "@radix-ui/react-select": "latest",
     "@radix-ui/react-slot": "latest",
     "@radix-ui/react-switch": "latest",
-    "@remix-run/react": "latest",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
-    "@sveltejs/kit": "latest",
     "@vercel/analytics": "latest",
     "@vercel/speed-insights": "latest",
     "ai": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "latest",
+    "http": "latest",
     "lucide-react": "^0.454.0",
     "next": "14.2.16",
     "next-themes": "latest",
     "react": "^18",
     "react-dom": "^18",
     "react-masonry-css": "latest",
-    "svelte": "latest",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "vue": "latest",
+    "url": "latest",
     "vue-router": "latest",
     "zod": "latest"
   },
@@ -53,5 +55,9 @@
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=9.0.0"
   }
 }

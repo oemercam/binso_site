@@ -121,7 +121,7 @@ scripts/009_create_theme_settings.sql
 
 ## 🚀 Deployment
 
-### Vercel Deployment
+### Vercel Deployment (Empfohlen)
 
 1. Repository mit Vercel verbinden
 2. Umgebungsvariablen in Vercel setzen
@@ -131,6 +131,17 @@ scripts/009_create_theme_settings.sql
 # Oder manuell deployen
 vercel --prod
 \`\`\`
+
+### Plesk Deployment
+
+Für detaillierte Anleitung siehe **[PLESK_DEPLOYMENT.md](PLESK_DEPLOYMENT.md)**
+
+Kurzanleitung:
+1. ZIP herunterladen und auf Server hochladen
+2. Node.js 18.17+ in Plesk aktivieren
+3. Umgebungsvariablen in Plesk setzen
+4. `npm run plesk:build` ausführen
+5. App mit `npm run plesk:start` starten
 
 ## 📱 Admin Dashboard
 
