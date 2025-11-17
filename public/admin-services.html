@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dienstleistungen verwalten - Binso Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; }
+        
+        /* Sidebar */
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 70px; background: #000; color: #fff; transition: width 0.3s; z-index: 1000; overflow: hidden; }
+        .sidebar.expanded { width: 280px; }
+        .logo { padding: 20px; font-size: 18px; font-weight: 600; white-space: nowrap; }
+        .nav-item { display: flex; align-items: center; padding: 15px 20px; text-decoration: none; color: #999; transition: all 0.2s; cursor: pointer; }
+        .nav-item:hover, .nav-item.active { background: #111; color: #fff; }
+        .nav-item svg { width: 24px; height: 24px; min-width: 24px; }
+        .nav-item span { margin-left: 15px; white-space: nowrap; }
+        .hamburger { position: absolute; top: 20px; right: 20px; cursor: pointer; }
+        .hamburger div { width: 20px; height: 2px; background: #fff; margin: 4px 0; }
+        
+        /* Main content */
+        .main { margin-left: 70px; padding: 40px; transition: margin-left 0.3s; }
+        .sidebar.expanded ~ .main { margin-left: 280px; }
+        .header { margin-bottom: 30px; }
+        h1 { font-size: 32px; font-weight: 600; margin-bottom: 10px; }
+        .subtitle { color: #666; }
+        
+        /* Table */
+        .table-container { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f9f9f9; font-weight: 600; font-size: 14px; color: #666; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .btn-primary { background: #000; color: #fff; }
+        .btn-secondary { background: #f0f0f0; color: #000; margin-left: 8px; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .status-published { background: #d1fae5; color: #065f46; }
+        .status-draft { background: #fee2e2; color: #991b1b; }
+        
+        /* Form modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: #fff; border-radius: 8px; padding: 30px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        textarea { min-height: 100px; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="hamburger" onclick="toggleSidebar()">
+            <div></div><div></div><div></div>
+        </div>
+        <div class="logo">binso</div>
+        <a href="/admin-dashboard.html" class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin-portfolio.html" class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <span>Portfolio</span>
+        </a>
+        <a href="/admin-services.html" class="nav-item active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span>Dienstleistungen</span>
+        </a>
+        <a href="/admin-contacts.html" class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span>Kontakte</span>
+        </a>
+        <div style="flex: 1;"></div>
+        <a href="/admin/login" class="nav-item" onclick="logout(event)">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span>Abmelden</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <div class="header">
+            <h1>Dienstleistungen</h1>
+            <p class="subtitle">Verwalten Sie Ihre angebotenen Services</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="showModal()">+ Neue Dienstleistung</button>
+
+        <div class="table-container" style="margin-top: 20px;">
+            <table id="servicesTable">
+                <thead>
+                    <tr>
+                        <th>Titel</th>
+                        <th>Kategorie</th>
+                        <th>Preis</th>
+                        <th>Status</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody id="servicesBody">
+                    <tr><td colspan="5" style="text-align: center; padding: 40px;">Lädt...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Neue Dienstleistung</h2>
+            <form id="serviceForm" onsubmit="saveService(event)">
+                <input type="hidden" id="serviceId">
+                
+                <div class="form-group">
+                    <label>Titel *</label>
+                    <input type="text" id="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Beschreibung *</label>
+                    <textarea id="description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Kategorie</label>
+                    <input type="text" id="category">
+                </div>
+
+                <div class="form-group">
+                    <label>Preis</label>
+                    <input type="text" id="pricing" placeholder="z.B. ab CHF 1'500">
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="published">
+                        <option value="true">Veröffentlicht</option>
+                        <option value="false">Entwurf</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 30px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('expanded');
+            localStorage.setItem('sidebarExpanded', document.getElementById('sidebar').classList.contains('expanded'));
+        }
+
+        if (localStorage.getItem('sidebarExpanded') === 'true') {
+            document.getElementById('sidebar').classList.add('expanded');
+        }
+
+        async function loadServices() {
+            try {
+                const res = await fetch(`${window.location.origin}/api/admin/services`);
+                const services = await res.json();
+                const tbody = document.getElementById('servicesBody');
+                
+                if (services.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">Keine Dienstleistungen vorhanden</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = services.map(service => `
+                    <tr>
+                        <td><strong>${service.title}</strong></td>
+                        <td>${service.category || '-'}</td>
+                        <td>${service.pricing || '-'}</td>
+                        <td><span class="status-badge status-${service.published ? 'published' : 'draft'}">${service.published ? 'Veröffentlicht' : 'Entwurf'}</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick='editService(${JSON.stringify(service)})'>Bearbeiten</button>
+                            <button class="btn btn-danger" onclick="deleteService(${service.id})">Löschen</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+        }
+
+        function showModal() {
+            document.getElementById('modalTitle').textContent = 'Neue Dienstleistung';
+            document.getElementById('serviceForm').reset();
+            document.getElementById('serviceId').value = '';
+            document.getElementById('serviceModal').classList.add('active');
+        }
+
+        function editService(service) {
+            document.getElementById('modalTitle').textContent = 'Dienstleistung bearbeiten';
+            document.getElementById('serviceId').value = service.id;
+            document.getElementById('title').value = service.title;
+            document.getElementById('description').value = service.description;
+            document.getElementById('category').value = service.category || '';
+            document.getElementById('pricing').value = service.pricing || '';
+            document.getElementById('published').value = service.published.toString();
+            document.getElementById('serviceModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+
+        async function saveService(e) {
+            e.preventDefault();
+            const id = document.getElementById('serviceId').value;
+            const data = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                pricing: document.getElementById('pricing').value,
+                published: document.getElementById('published').value === 'true'
+            };
+
+            const url = id ? `/api/admin/services/${id}` : '/api/admin/services';
+            const method = id ? 'PUT' : 'POST';
+
+            await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            closeModal();
+            loadServices();
+        }
+
+        async function deleteService(id) {
+            if (!confirm('Möchten Sie diese Dienstleistung wirklich löschen?')) return;
+            
+            await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
+            loadServices();
+        }
+
+        function logout(e) {
+            e.preventDefault();
+            document.cookie = 'admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/admin/login';
+        }
+
+        loadServices();
+    </script>
+</body>
+</html>

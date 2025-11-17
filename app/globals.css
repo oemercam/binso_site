@@ -1,0 +1,582 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Added utility class to hide scrollbar for mobile carousel */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* iOS-spezifische Optimierungen für Touch und Safe Areas */
+  /* iOS Safe Area Support */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Touch-optimierte Interaktionen für iOS und Android */
+  .touch-optimized {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Smooth Scrolling für iOS und Android */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+
+  /* Android Material Design Touch Feedback */
+  .ripple-effect {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple-effect::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .ripple-effect:active::after {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* Android Hardware Acceleration */
+  .hw-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Browser-spezifische Optimierungen hinzugefügt */
+  /* Chrome/Edge/Opera (Chromium-basiert) Optimierungen */
+  .chrome-optimized {
+    /* Hardware-beschleunigtes Rendering */
+    transform: translateZ(0);
+    will-change: transform;
+    /* Optimierte Schriftdarstellung */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Firefox-spezifische Optimierungen */
+  .firefox-optimized {
+    /* Smooth Scrolling für Firefox */
+    scroll-behavior: smooth;
+    /* Optimierte Schriftdarstellung */
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Safari-spezifische Optimierungen */
+  .safari-optimized {
+    /* 3D Transform für bessere Performance */
+    -webkit-transform: translateZ(0);
+    /* Smooth Touch-Scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Optimierte Schriftdarstellung */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Cross-Browser Gradient Support */
+  .gradient-cross-browser {
+    background: linear-gradient(135deg, #7a7fee 0%, #6b70d4 100%);
+    background: -webkit-linear-gradient(135deg, #7a7fee 0%, #6b70d4 100%);
+    background: -moz-linear-gradient(135deg, #7a7fee 0%, #6b70d4 100%);
+    background: -o-linear-gradient(135deg, #7a7fee 0%, #6b70d4 100%);
+  }
+
+  /* Cross-Browser Flexbox Support */
+  .flex-cross-browser {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+  }
+
+  /* Cross-Browser Transform Support */
+  .transform-cross-browser {
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Cross-Browser Transition Support */
+  .transition-cross-browser {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+
+  /* Cross-Browser Box-Shadow Support */
+  .shadow-cross-browser {
+    -webkit-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Cross-Browser Border-Radius Support */
+  .rounded-cross-browser {
+    -webkit-border-radius: 0.5rem;
+    -moz-border-radius: 0.5rem;
+    border-radius: 0.5rem;
+  }
+  /* </CHANGE> */
+
+  /* Entferne alte Animationen und füge moderne Mesh-Gradient-Animationen hinzu */
+  @keyframes mesh-1 {
+    0%, 100% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+    33% {
+      transform: translate(5%, -5%) scale(1.05) rotate(2deg);
+    }
+    66% {
+      transform: translate(-5%, 5%) scale(0.95) rotate(-2deg);
+    }
+  }
+
+  @keyframes mesh-2 {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translate(-10%, 10%) rotate(5deg);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mesh-3 {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translate(10%, -10%) scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes mesh-4 {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      transform: translate(20%, 20%) scale(1.2);
+    }
+    50% {
+      transform: translate(-20%, 20%) scale(0.8);
+    }
+    75% {
+      transform: translate(20%, -20%) scale(1.1);
+    }
+  }
+
+  .animate-mesh-1 {
+    animation: mesh-1 20s ease-in-out infinite;
+  }
+
+  .animate-mesh-2 {
+    animation: mesh-2 15s ease-in-out infinite;
+  }
+
+  .animate-mesh-3 {
+    animation: mesh-3 18s ease-in-out infinite;
+  }
+
+  .animate-mesh-4 {
+    animation: mesh-4 25s ease-in-out infinite;
+  }
+}
+
+@layer base {
+  :root {
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    --font-outfit: "Outfit", sans-serif;
+    --card-border: 0 0% 89.8%;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    --card-border: 0 0% 14.9%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-outfit);
+    /* Cross-Browser Font-Rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+    /* Chrome/Safari optimierte Performance */
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    /* </CHANGE> */
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Cross-Browser Scroll-Optimierungen */
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+    overscroll-behavior-y: none;
+    /* Firefox Smooth Scrolling */
+    scroll-padding-top: 80px;
+    /* </CHANGE> */
+  }
+
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+
+  h1 {
+    font-weight: 500;
+    font-size: 60px;
+    line-height: 1.2em;
+    letter-spacing: 0;
+  }
+
+  h2 {
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1.2em;
+    letter-spacing: 0;
+  }
+
+  /* Verbesserte responsive Breakpoints für iOS, Android und mobile Geräte */
+  @media (max-width: 1440px) {
+    h1 {
+      font-size: calc(40px + (60 - 40) * ((100vw - 768px) / (1440 - 768)));
+    }
+    h2 {
+      font-size: calc(36px + (48 - 36) * ((100vw - 768px) / (1440 - 768)));
+    }
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 40px;
+    }
+    h2 {
+      font-size: 36px;
+    }
+  }
+
+  /* iPhone SE und kleine Android-Geräte */
+  @media (max-width: 375px) {
+    h1 {
+      font-size: 32px;
+    }
+    h2 {
+      font-size: 28px;
+    }
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  /* iOS und Android Landscape Modus */
+  @media (max-height: 500px) and (orientation: landscape) {
+    h1 {
+      font-size: 28px;
+    }
+    h2 {
+      font-size: 24px;
+    }
+  }
+
+  /* Android-spezifische Breakpoints */
+  /* Samsung Galaxy und andere große Android-Geräte */
+  @media (min-width: 360px) and (max-width: 414px) {
+    .container {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+  }
+  
+  /* Tablets im Portrait-Modus */
+  @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    h1 {
+      font-size: 48px;
+    }
+    h2 {
+      font-size: 40px;
+    }
+  }
+  /* </CHANGE> */
+}
+
+@layer components {
+  /* Cross-Browser Component Styles mit Vendor-Präfixen */
+  .card {
+    background-color: white;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 1.5rem;
+    -webkit-border-radius: 1.5rem;
+    -moz-border-radius: 1.5rem;
+  }
+
+  .dark .card {
+    background-color: #272829;
+    border-color: rgb(31 41 55);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    display: -webkit-inline-flex;
+    display: -moz-inline-flex;
+    align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #7a7fee;
+    color: white;
+    border-radius: 9999px;
+    -webkit-border-radius: 9999px;
+    -moz-border-radius: 9999px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    -webkit-transition: background-color 0.2s;
+    -moz-transition: background-color 0.2s;
+    -o-transition: background-color 0.2s;
+    min-height: 48px;
+    min-width: 48px;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary:hover {
+    background-color: #6b70d4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+    -webkit-transform: scale(0.98);
+    -moz-transform: scale(0.98);
+    -o-transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    display: -webkit-inline-flex;
+    display: -moz-inline-flex;
+    align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    padding: 0.75rem 1.5rem;
+    background-color: transparent;
+    border: 2px solid #7a7fee;
+    color: #7a7fee;
+    border-radius: 9999px;
+    -webkit-border-radius: 9999px;
+    -moz-border-radius: 9999px;
+    font-weight: 500;
+    transition: all 0.2s;
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    min-height: 48px;
+    min-width: 48px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-secondary:hover {
+    background-color: #7a7fee;
+    color: white;
+  }
+
+  .btn-secondary:active {
+    transform: scale(0.98);
+    -webkit-transform: scale(0.98);
+    -moz-transform: scale(0.98);
+    -o-transform: scale(0.98);
+  }
+
+  .prose h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: rgb(17 24 39);
+  }
+
+  .dark .prose h3 {
+    color: white;
+  }
+
+  .prose p {
+    color: rgb(55 65 81);
+    margin-bottom: 1rem;
+  }
+
+  .dark .prose p {
+    color: rgb(209 213 219);
+  }
+
+  .prose ul {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+    color: rgb(55 65 81);
+  }
+
+  .dark .prose ul {
+    color: rgb(209 213 219);
+  }
+
+  .prose ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+    color: rgb(55 65 81);
+  }
+
+  .dark .prose ol {
+    color: rgb(209 213 219);
+  }
+
+  .prose a {
+    color: #7a7fee;
+  }
+
+  .prose a:hover {
+    text-decoration: underline;
+  }
+
+  .prose strong {
+    font-weight: 600;
+    color: rgb(17 24 39);
+  }
+
+  .dark .prose strong {
+    color: white;
+  }
+}

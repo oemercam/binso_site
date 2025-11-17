@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design & Theme - Binso Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: 70px;
+      background: #000;
+      color: #fff;
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      z-index: 1000;
+    }
+    .sidebar.expanded { width: 280px; }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+    }
+    .hamburger {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .hamburger span {
+      display: block;
+      height: 2px;
+      background: #fff;
+    }
+    .logo { font-size: 18px; font-weight: 600; white-space: nowrap; opacity: 0; margin-left: 16px; }
+    .sidebar.expanded .logo { opacity: 1; }
+    .nav-items { margin-top: 20px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      color: #999;
+      text-decoration: none;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    .nav-item:hover, .nav-item.active { background: #1a1a1a; color: #fff; }
+    .nav-item svg { min-width: 24px; margin-right: 15px; }
+    .nav-text { opacity: 0; transition: opacity 0.3s; }
+    .sidebar.expanded .nav-text { opacity: 1; }
+
+    .main-content {
+      margin-left: 70px;
+      flex: 1;
+      transition: margin-left 0.3s ease;
+      padding: 30px;
+    }
+    .sidebar.expanded + .main-content { margin-left: 280px; }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    h1 { font-size: 28px; }
+    
+    .section-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .color-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .color-item label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+    .color-picker-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .color-preview {
+      width: 60px;
+      height: 40px;
+      border-radius: 6px;
+      border: 2px solid #ddd;
+      cursor: pointer;
+    }
+    .color-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .font-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    
+    .logo-uploader {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .logo-uploader:hover { border-color: #000; }
+    .logo-preview {
+      max-width: 200px;
+      max-height: 100px;
+      margin: 0 auto;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    .btn-primary {
+      background: #000;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #333; }
+    
+    .preview-box {
+      background: #f9f9f9;
+      padding: 30px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .preview-button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .save-bar {
+      position: fixed;
+      bottom: 0;
+      left: 70px;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 20px;
+      display: none;
+      justify-content: flex-end;
+      gap: 10px;
+      z-index: 999;
+    }
+    .save-bar.active { display: flex; }
+    .sidebar.expanded + .main-content .save-bar { left: 280px; }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="hamburger" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="logo">binso</div>
+    </div>
+    <div class="nav-items">
+      <a href="/admin-dashboard.html" class="nav-item">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a href="/admin-theme.html" class="nav-item active">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <span class="nav-text">Design & Theme</span>
+      </a>
+      <a href="/admin-settings.html" class="nav-item">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6"/></svg>
+        <span class="nav-text">Einstellungen</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h1>Design & Theme Verwaltung</h1>
+    </div>
+
+    <!-- Farben -->
+    <div class="section-card">
+      <h2 class="section-title">Farben</h2>
+      <div class="color-grid">
+        <div class="color-item">
+          <label>Primärfarbe</label>
+          <div class="color-picker-wrapper">
+            <div class="color-preview" id="primaryColorPreview" onclick="document.getElementById('primaryColor').click()"></div>
+            <input type="color" id="primaryColor" style="display: none;" onchange="updateColor('primary_color', this.value)">
+            <input type="text" class="color-input" id="primaryColorText" oninput="updateColorFromText('primary_color', this.value)">
+          </div>
+        </div>
+        
+        <div class="color-item">
+          <label>Sekundärfarbe</label>
+          <div class="color-picker-wrapper">
+            <div class="color-preview" id="secondaryColorPreview" onclick="document.getElementById('secondaryColor').click()"></div>
+            <input type="color" id="secondaryColor" style="display: none;" onchange="updateColor('secondary_color', this.value)">
+            <input type="text" class="color-input" id="secondaryColorText" oninput="updateColorFromText('secondary_color', this.value)">
+          </div>
+        </div>
+        
+        <div class="color-item">
+          <label>Hintergrundfarbe</label>
+          <div class="color-picker-wrapper">
+            <div class="color-preview" id="backgroundColorPreview" onclick="document.getElementById('backgroundColor').click()"></div>
+            <input type="color" id="backgroundColor" style="display: none;" onchange="updateColor('background_color', this.value)">
+            <input type="text" class="color-input" id="backgroundColorText" oninput="updateColorFromText('background_color', this.value)">
+          </div>
+        </div>
+        
+        <div class="color-item">
+          <label>Textfarbe</label>
+          <div class="color-picker-wrapper">
+            <div class="color-preview" id="textColorPreview" onclick="document.getElementById('textColor').click()"></div>
+            <input type="color" id="textColor" style="display: none;" onchange="updateColor('text_color', this.value)">
+            <input type="text" class="color-input" id="textColorText" oninput="updateColorFromText('text_color', this.value)">
+          </div>
+        </div>
+      </div>
+      
+      <div class="preview-box" id="colorPreview">
+        <h3 style="margin-bottom: 16px;">Vorschau</h3>
+        <button class="preview-button">Beispiel Button</button>
+        <p style="margin-top: 16px;">Dies ist ein Beispieltext mit der ausgewählten Textfarbe.</p>
+      </div>
+    </div>
+
+    <!-- Typografie -->
+    <div class="section-card">
+      <h2 class="section-title">Typografie</h2>
+      <div class="color-grid">
+        <div class="color-item">
+          <label>Überschriften-Schrift</label>
+          <select class="font-select" id="headingFont" onchange="updateFont('heading_font', this.value)">
+            <option value="Inter">Inter</option>
+            <option value="Arial">Arial</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+        </div>
+        
+        <div class="color-item">
+          <label>Text-Schrift</label>
+          <select class="font-select" id="bodyFont" onchange="updateFont('body_font', this.value)">
+            <option value="Inter">Inter</option>
+            <option value="Arial">Arial</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logos -->
+    <div class="section-card">
+      <h2 class="section-title">Logos & Icons</h2>
+      <div class="color-grid">
+        <div class="color-item">
+          <label>Haupt-Logo</label>
+          <div class="logo-uploader" onclick="document.getElementById('logoUpload').click()">
+            <img id="logoPreview" class="logo-preview" style="display: none;">
+            <div id="logoPlaceholder">
+              <svg width="48" height="48" fill="none" stroke="#ccc" stroke-width="2" style="margin: 0 auto;">
+                <rect x="4" y="4" width="40" height="40" rx="4"/>
+                <path d="M16 16l16 16M32 16L16 32"/>
+              </svg>
+              <p style="margin-top: 12px; color: #999; font-size: 14px;">Logo hochladen</p>
+            </div>
+          </div>
+          <input type="file" id="logoUpload" accept="image/*" style="display: none;" onchange="uploadLogo('logo_url', this)">
+        </div>
+        
+        <div class="color-item">
+          <label>Favicon</label>
+          <div class="logo-uploader" onclick="document.getElementById('faviconUpload').click()">
+            <img id="faviconPreview" class="logo-preview" style="display: none;">
+            <div id="faviconPlaceholder">
+              <svg width="32" height="32" fill="none" stroke="#ccc" stroke-width="2" style="margin: 0 auto;">
+                <circle cx="16" cy="16" r="14"/>
+              </svg>
+              <p style="margin-top: 12px; color: #999; font-size: 14px;">Favicon hochladen</p>
+            </div>
+          </div>
+          <input type="file" id="faviconUpload" accept="image/*" style="display: none;" onchange="uploadLogo('favicon_url', this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div class="save-bar" id="saveBar">
+      <button class="btn" style="background: #6c757d; color: #fff;" onclick="resetChanges()">Verwerfen</button>
+      <button class="btn btn-primary" onclick="saveTheme()">Änderungen speichern</button>
+    </div>
+  </div>
+
+  <script>
+    let hasChanges = false;
+    let themeSettings = {};
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('expanded');
+      localStorage.setItem('sidebarExpanded', document.getElementById('sidebar').classList.contains('expanded'));
+    }
+    if (localStorage.getItem('sidebarExpanded') === 'true') {
+      document.getElementById('sidebar').classList.add('expanded');
+    }
+
+    async function loadTheme() {
+      try {
+        const response = await fetch('/api/admin/theme');
+        const data = await response.json();
+        
+        data.forEach(setting => {
+          themeSettings[setting.key] = setting.value;
+          
+          if (setting.type === 'color') {
+            const key = setting.key.replace(/_/g, '');
+            const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
+            document.getElementById(key + 'Preview').style.background = setting.value;
+            document.getElementById(key).value = setting.value;
+            document.getElementById(key + 'Text').value = setting.value;
+          } else if (setting.type === 'font') {
+            const key = setting.key.replace('_font', 'Font');
+            document.getElementById(key).value = setting.value;
+          } else if (setting.type === 'image' && setting.value) {
+            const key = setting.key.replace('_url', '');
+            const preview = document.getElementById(key + 'Preview');
+            const placeholder = document.getElementById(key + 'Placeholder');
+            if (preview && placeholder) {
+              preview.src = setting.value;
+              preview.style.display = 'block';
+              placeholder.style.display = 'none';
+            }
+          }
+        });
+        
+        updatePreview();
+      } catch (error) {
+        console.error('[v0] Error loading theme:', error);
+      }
+    }
+
+    function updateColor(key, value) {
+      themeSettings[key] = value;
+      hasChanges = true;
+      document.getElementById('saveBar').classList.add('active');
+      
+      const keyName = key.replace(/_/g, '');
+      document.getElementById(keyName + 'Preview').style.background = value;
+      document.getElementById(keyName + 'Text').value = value;
+      document.getElementById(keyName).value = value;
+      
+      updatePreview();
+    }
+
+    function updateColorFromText(key, value) {
+      if (/^#[0-9A-F]{6}$/i.test(value)) {
+        updateColor(key, value);
+      }
+    }
+
+    function updateFont(key, value) {
+      themeSettings[key] = value;
+      hasChanges = true;
+      document.getElementById('saveBar').classList.add('active');
+    }
+
+    function updatePreview() {
+      const preview = document.getElementById('colorPreview');
+      const button = preview.querySelector('.preview-button');
+      const text = preview.querySelector('p');
+      
+      preview.style.background = themeSettings.background_color || '#ffffff';
+      button.style.background = themeSettings.primary_color || '#10b981';
+      button.style.color = '#ffffff';
+      text.style.color = themeSettings.text_color || '#000000';
+    }
+
+    async function uploadLogo(key, input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', 'logo');
+      
+      try {
+        const response = await fetch('/api/admin/media/upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        themeSettings[key] = data.file_path;
+        
+        const keyName = key.replace('_url', '');
+        const preview = document.getElementById(keyName + 'Preview');
+        const placeholder = document.getElementById(keyName + 'Placeholder');
+        
+        preview.src = data.file_path;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        
+        hasChanges = true;
+        document.getElementById('saveBar').classList.add('active');
+      } catch (error) {
+        console.error('[v0] Error uploading logo:', error);
+        alert('Fehler beim Hochladen');
+      }
+    }
+
+    async function saveTheme() {
+      try {
+        const updates = Object.keys(themeSettings).map(key => ({
+          key,
+          value: themeSettings[key]
+        }));
+        
+        const response = await fetch('/api/admin/theme', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ settings: updates })
+        });
+        
+        if (response.ok) {
+          hasChanges = false;
+          document.getElementById('saveBar').classList.remove('active');
+          alert('Theme erfolgreich gespeichert!');
+        } else {
+          alert('Fehler beim Speichern');
+        }
+      } catch (error) {
+        console.error('[v0] Error saving theme:', error);
+        alert('Fehler beim Speichern');
+      }
+    }
+
+    function resetChanges() {
+      if (confirm('Möchten Sie alle ungespeicherten Änderungen verwerfen?')) {
+        hasChanges = false;
+        document.getElementById('saveBar').classList.remove('active');
+        loadTheme();
+      }
+    }
+
+    loadTheme();
+  </script>
+</body>
+</html>

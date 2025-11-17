@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team verwalten - Binso Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 32px; font-weight: 600; margin-bottom: 30px; }
+        .btn { padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #333; }
+        .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        textarea { min-height: 100px; resize: vertical; }
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .team-card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .team-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; margin-bottom: 15px; }
+        .team-card h3 { font-size: 18px; margin-bottom: 5px; }
+        .team-card p { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-edit { background: #000; color: #fff; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .btn-delete { background: #dc3545; color: #fff; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: #fff; width: 90%; max-width: 600px; margin: 50px auto; border-radius: 8px; padding: 30px; }
+        .close { float: right; font-size: 28px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Team verwalten</h1>
+        <button class="btn" onclick="openModal()">+ Neues Team-Mitglied</button>
+        
+        <div class="team-grid" id="teamGrid"></div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Team-Mitglied hinzufügen</h2>
+            <form id="teamForm">
+                <input type="hidden" id="memberId">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Position *</label>
+                    <input type="text" id="position" required>
+                </div>
+                <div class="form-group">
+                    <label>Bild URL</label>
+                    <input type="url" id="image">
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="bio"></textarea>
+                </div>
+                <button type="submit" class="btn">Speichern</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let team = [];
+
+        async function loadTeam() {
+            const res = await fetch('/api/admin/team');
+            team = await res.json();
+            renderTeam();
+        }
+
+        function renderTeam() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = team.map(member => `
+                <div class="team-card">
+                    <img src="${member.image || '/placeholder.svg?height=200&width=300'}" alt="${member.name}">
+                    <h3>${member.name}</h3>
+                    <p>${member.position}</p>
+                    <p style="font-size: 13px; color: #666;">${member.bio || ''}</p>
+                    <div class="actions">
+                        <button class="btn-edit" onclick="editMember(${member.id})">Bearbeiten</button>
+                        <button class="btn-delete" onclick="deleteMember(${member.id})">Löschen</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(member = null) {
+            document.getElementById('modal').style.display = 'block';
+            if (member) {
+                document.getElementById('modalTitle').textContent = 'Team-Mitglied bearbeiten';
+                document.getElementById('memberId').value = member.id;
+                document.getElementById('name').value = member.name;
+                document.getElementById('position').value = member.position;
+                document.getElementById('image').value = member.image || '';
+                document.getElementById('bio').value = member.bio || '';
+            } else {
+                document.getElementById('modalTitle').textContent = 'Team-Mitglied hinzufügen';
+                document.getElementById('teamForm').reset();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function editMember(id) {
+            const member = team.find(m => m.id === id);
+            openModal(member);
+        }
+
+        async function deleteMember(id) {
+            if (!confirm('Möchten Sie dieses Team-Mitglied wirklich löschen?')) return;
+            await fetch(`/api/admin/team/${id}`, { method: 'DELETE' });
+            loadTeam();
+        }
+
+        document.getElementById('teamForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('memberId').value;
+            const data = {
+                name: document.getElementById('name').value,
+                position: document.getElementById('position').value,
+                image: document.getElementById('image').value,
+                bio: document.getElementById('bio').value
+            };
+
+            if (id) {
+                await fetch(`/api/admin/team/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                await fetch('/api/admin/team', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+
+            closeModal();
+            loadTeam();
+        });
+
+        loadTeam();
+    </script>
+</body>
+</html>

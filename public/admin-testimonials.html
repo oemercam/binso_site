@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testimonials - Binso Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+      background: #ffffff;
+      color: #000000;
+    }
+    
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 70px;
+      height: 100vh;
+      background: #000000;
+      color: #ffffff;
+      transition: width 0.3s ease;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    
+    .sidebar.expanded { width: 280px; }
+    
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #333333;
+      display: flex;
+      align-items: center;
+      height: 70px;
+    }
+    
+    .hamburger-btn {
+      background: transparent;
+      border: none;
+      width: 30px;
+      height: 30px;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .hamburger-btn:hover { opacity: 0.7; }
+    
+    .sidebar-logo {
+      font-size: 22px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      margin-left: 16px;
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+      transition: opacity 0.3s, width 0.3s;
+    }
+    
+    .sidebar.expanded .sidebar-logo {
+      opacity: 1;
+      width: auto;
+    }
+    
+    .sidebar-nav { padding: 8px 0; }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      color: #999999;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+    }
+    
+    .nav-item:hover {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+    
+    .nav-item.active {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+    
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ffffff;
+    }
+    
+    .nav-icon {
+      min-width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .nav-text {
+      margin-left: 16px;
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+      transition: opacity 0.3s, width 0.3s;
+    }
+    
+    .sidebar.expanded .nav-text {
+      opacity: 1;
+      width: auto;
+    }
+    
+    .logout-section {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-top: 1px solid #333333;
+      padding: 8px 0;
+    }
+    
+    .main-content {
+      margin-left: 70px;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh;
+    }
+    
+    .main-content.shifted { margin-left: 280px; }
+    
+    .header { 
+      background: #ffffff; 
+      border-bottom: 1px solid #e5e5e5; 
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 { 
+      font-size: 28px; 
+      color: #000000; 
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: #000000;
+      color: #ffffff;
+    }
+    
+    .btn-primary:hover {
+      background: #333333;
+    }
+    
+    .container { 
+      max-width: 1400px; 
+      margin: 0 auto; 
+      padding: 40px;
+    }
+    
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+    }
+    
+    .testimonial-card {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+    
+    .testimonial-card:hover {
+      border-color: #000000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .testimonial-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .testimonial-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .testimonial-company {
+      color: #666666;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    
+    .testimonial-rating {
+      color: #000000;
+      font-size: 18px;
+    }
+    
+    .testimonial-text {
+      color: #333333;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    
+    .testimonial-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #000000;
+    }
+    
+    .btn-secondary:hover {
+      background: #e5e5e5;
+    }
+    
+    .btn-danger {
+      background: #f0f0f0;
+      color: #000000;
+    }
+    
+    .btn-danger:hover {
+      background: #e5e5e5;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .modal-title {
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666666;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="hamburger-btn" onclick="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="sidebar-logo">binso</div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="/admin-dashboard.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      
+      <a href="/admin-portfolio.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="nav-text">Portfolio</span>
+      </a>
+      
+      <a href="/admin-services.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"/>
+          </svg>
+        </div>
+        <span class="nav-text">Dienstleistungen</span>
+      </a>
+      
+      <a href="/admin-team.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <span class="nav-text">Team</span>
+      </a>
+      
+      <a href="/admin-testimonials.html" class="nav-item active">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="nav-text">Testimonials</span>
+      </a>
+      
+      <a href="/admin-contacts.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <span class="nav-text">Kontakte</span>
+      </a>
+      
+      <a href="/admin-faqs.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <span class="nav-text">FAQs</span>
+      </a>
+    </nav>
+    
+    <div class="logout-section">
+      <a href="/admin-profile.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <span class="nav-text">Profil</span>
+      </a>
+      
+      <a href="#" class="nav-item" onclick="logout(); return false;">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </div>
+        <span class="nav-text">Abmelden</span>
+      </a>
+    </div>
+  </div>
+  
+  <div class="main-content" id="mainContent">
+    <div class="header">
+      <h1>Testimonials</h1>
+      <button class="btn btn-primary" onclick="openModal()">Neues Testimonial</button>
+    </div>
+    
+    <div class="container">
+      <div class="testimonials-grid" id="testimonials-grid">
+        <!-- Testimonials werden hier dynamisch geladen -->
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Neues Testimonial</h2>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      
+      <form id="testimonial-form">
+        <input type="hidden" id="testimonial-id">
+        
+        <div class="form-group">
+          <label for="author">Name</label>
+          <input type="text" id="author" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="company">Firma</label>
+          <input type="text" id="company" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="position">Position</label>
+          <input type="text" id="position" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="content">Testimonial</label>
+          <textarea id="content" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="rating">Bewertung</label>
+          <select id="rating" required>
+            <option value="5">★★★★★ (5 Sterne)</option>
+            <option value="4">★★★★☆ (4 Sterne)</option>
+            <option value="3">★★★☆☆ (3 Sterne)</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Speichern</button>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    let testimonials = [];
+    
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      sidebar.classList.toggle('expanded');
+      mainContent.classList.toggle('shifted');
+      localStorage.setItem('sidebarExpanded', sidebar.classList.contains('expanded'));
+    }
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      const isExpanded = localStorage.getItem('sidebarExpanded') === 'true';
+      if (isExpanded && window.innerWidth > 768) {
+        document.getElementById('sidebar').classList.add('expanded');
+        document.getElementById('mainContent').classList.add('shifted');
+      }
+      loadTestimonials();
+    });
+    
+    function logout() {
+      document.cookie = 'admin-session=; Max-Age=0; path=/';
+      window.location.href = '/admin/login';
+    }
+    
+    async function loadTestimonials() {
+      try {
+        const response = await fetch('/api/admin/testimonials');
+        testimonials = await response.json();
+        renderTestimonials();
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+      }
+    }
+    
+    function renderTestimonials() {
+      const grid = document.getElementById('testimonials-grid');
+      grid.innerHTML = testimonials.map(t => `
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <div>
+              <div class="testimonial-name">${t.author}</div>
+              <div class="testimonial-company">${t.company} • ${t.position}</div>
+            </div>
+            <div class="testimonial-rating">${'★'.repeat(t.rating)}${'☆'.repeat(5-t.rating)}</div>
+          </div>
+          <div class="testimonial-text">${t.content}</div>
+          <div class="testimonial-actions">
+            <button class="btn btn-secondary btn-small" onclick="editTestimonial('${t.id}')">Bearbeiten</button>
+            <button class="btn btn-danger btn-small" onclick="deleteTestimonial('${t.id}')">Löschen</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function openModal(id = null) {
+      const modal = document.getElementById('modal');
+      const form = document.getElementById('testimonial-form');
+      const title = document.getElementById('modal-title');
+      
+      if (id) {
+        const testimonial = testimonials.find(t => t.id === id);
+        title.textContent = 'Testimonial bearbeiten';
+        document.getElementById('testimonial-id').value = id;
+        document.getElementById('author').value = testimonial.author;
+        document.getElementById('company').value = testimonial.company;
+        document.getElementById('position').value = testimonial.position;
+        document.getElementById('content').value = testimonial.content;
+        document.getElementById('rating').value = testimonial.rating;
+      } else {
+        title.textContent = 'Neues Testimonial';
+        form.reset();
+        document.getElementById('testimonial-id').value = '';
+      }
+      
+      modal.classList.add('active');
+    }
+    
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+    
+    function editTestimonial(id) {
+      openModal(id);
+    }
+    
+    async function deleteTestimonial(id) {
+      if (!confirm('Möchten Sie dieses Testimonial wirklich löschen?')) return;
+      
+      try {
+        await fetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
+        await loadTestimonials();
+      } catch (error) {
+        console.error('Error deleting testimonial:', error);
+      }
+    }
+    
+    document.getElementById('testimonial-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('testimonial-id').value;
+      const data = {
+        author: document.getElementById('author').value,
+        company: document.getElementById('company').value,
+        position: document.getElementById('position').value,
+        content: document.getElementById('content').value,
+        rating: parseInt(document.getElementById('rating').value),
+        published: true
+      };
+      
+      try {
+        if (id) {
+          await fetch(`/api/admin/testimonials/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        } else {
+          await fetch('/api/admin/testimonials', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+        }
+        
+        closeModal();
+        await loadTestimonials();
+      } catch (error) {
+        console.error('Error saving testimonial:', error);
+      }
+    });
+  </script>
+</body>
+</html>

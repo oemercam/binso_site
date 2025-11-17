@@ -1,0 +1,48 @@
+{
+  "name": "binso - IT Dienstleistungen",
+  "short_name": "binso",
+  "description": "IT-Dienstleistungen für Privat und Geschäfte: Azure M365, Cyber Security, Consulting, Support, Cloud, Modern Workplace, KI & Automation und Website-Entwicklung.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7a7fee",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "technology"],
+  "shortcuts": [
+    {
+      "name": "Dienstleistungen",
+      "short_name": "Services",
+      "description": "Unsere IT-Dienstleistungen",
+      "url": "/dienstleistungen",
+      "icons": [{ "src": "/favicon.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Portfolio",
+      "short_name": "Portfolio",
+      "description": "Unsere erfolgreichen Projekte",
+      "url": "/portfolio",
+      "icons": [{ "src": "/favicon.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Kontakt",
+      "short_name": "Kontakt",
+      "description": "Kontaktieren Sie uns",
+      "url": "/kontakt",
+      "icons": [{ "src": "/favicon.jpg", "sizes": "192x192" }]
+    }
+  ]
+}

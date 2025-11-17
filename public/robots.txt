@@ -1,0 +1,23 @@
+# robots.txt für binso
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://binso.ch/sitemap.xml
+
+# Admin-Bereich blockieren
+User-agent: *
+Disallow: /admin/
+Disallow: /api/admin/
+
+# Keine Crawling von Admin-Dateien
+Disallow: /admin-*.html
+Disallow: /api/
+
+# Keine Crawling von internen Routen
+Disallow: /_next/
+Disallow: /static/
+
+# Crawl-delay für Bots
+Crawl-delay: 1

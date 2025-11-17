@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Einstellungen - Binso Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+      background: #ffffff;
+      color: #000000;
+    }
+    
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 70px;
+      height: 100vh;
+      background: #000000;
+      color: #ffffff;
+      transition: width 0.3s ease;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    
+    .sidebar.expanded { width: 280px; }
+    
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #333333;
+      display: flex;
+      align-items: center;
+      height: 70px;
+    }
+    
+    .hamburger-btn {
+      background: transparent;
+      border: none;
+      width: 30px;
+      height: 30px;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .sidebar-logo {
+      font-size: 22px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      margin-left: 16px;
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+      transition: opacity 0.3s, width 0.3s;
+    }
+    
+    .sidebar.expanded .sidebar-logo {
+      opacity: 1;
+      width: auto;
+    }
+    
+    .sidebar-nav { padding: 8px 0; }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      color: #999999;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+    }
+    
+    .nav-item:hover {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+    
+    .nav-item.active {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+    
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ffffff;
+    }
+    
+    .nav-icon {
+      min-width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .nav-text {
+      margin-left: 16px;
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+      transition: opacity 0.3s, width 0.3s;
+    }
+    
+    .sidebar.expanded .nav-text {
+      opacity: 1;
+      width: auto;
+    }
+    
+    .logout-section {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-top: 1px solid #333333;
+      padding: 8px 0;
+    }
+    
+    .main-content {
+      margin-left: 70px;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh;
+    }
+    
+    .main-content.shifted { margin-left: 280px; }
+    
+    .header { 
+      background: #ffffff; 
+      border-bottom: 1px solid #e5e5e5; 
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 { 
+      font-size: 28px; 
+      color: #000000; 
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+    
+    .save-btn {
+      background: #000000;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .save-btn:hover {
+      background: #333333;
+    }
+    
+    .save-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 40px;
+    }
+    
+    .settings-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #000000;
+      letter-spacing: -0.3px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #666666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    input, textarea, select {
+      padding: 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #000000;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      text-transform: none;
+    }
+    
+    .success-message {
+      background: #000000;
+      color: #ffffff;
+      padding: 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      text-align: center;
+      display: none;
+    }
+    
+    .success-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="hamburger-btn" onclick="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="sidebar-logo">binso</div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="/admin-dashboard.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      
+      <a href="/admin-portfolio.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="nav-text">Portfolio</span>
+      </a>
+      
+      <a href="/admin-services.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"/>
+          </svg>
+        </div>
+        <span class="nav-text">Dienstleistungen</span>
+      </a>
+      
+      <a href="/admin-team.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <span class="nav-text">Team</span>
+      </a>
+      
+      <a href="/admin-testimonials.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="nav-text">Testimonials</span>
+      </a>
+      
+      <a href="/admin-contacts.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <span class="nav-text">Kontakte</span>
+      </a>
+      
+      <a href="/admin-faqs.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <span class="nav-text">FAQs</span>
+      </a>
+    </nav>
+    
+    <div class="logout-section">
+      <a href="/admin-settings.html" class="nav-item active">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6"/>
+            <path d="m19.07 4.93-4.24 4.24m0 5.66 4.24 4.24M4.93 4.93l4.24 4.24m5.66 0 4.24-4.24M1 12h6m6 0h6"/>
+          </svg>
+        </div>
+        <span class="nav-text">Einstellungen</span>
+      </a>
+      
+      <a href="/admin-profile.html" class="nav-item">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <span class="nav-text">Profil</span>
+      </a>
+      
+      <a href="#" class="nav-item" onclick="logout(); return false;">
+        <div class="nav-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </div>
+        <span class="nav-text">Abmelden</span>
+      </a>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <div class="header">
+      <h1>Einstellungen</h1>
+      <button class="save-btn" onclick="saveSettings()">Änderungen speichern</button>
+    </div>
+    
+    <div class="container">
+      <div class="success-message" id="successMessage">
+        Einstellungen erfolgreich gespeichert!
+      </div>
+      
+      <!-- Firmeninformationen -->
+      <div class="settings-section">
+        <h2 class="section-title">Firmeninformationen</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Firmenname</label>
+            <input type="text" id="company_name" placeholder="Binso GmbH">
+          </div>
+          
+          <div class="form-group">
+            <label>E-Mail</label>
+            <input type="email" id="company_email" placeholder="info@binso.ch">
+          </div>
+          
+          <div class="form-group">
+            <label>Telefon</label>
+            <input type="tel" id="company_phone" placeholder="+41 78 927 41 72">
+          </div>
+          
+          <div class="form-group">
+            <label>Adresse</label>
+            <input type="text" id="company_address" placeholder="Zürich, Schweiz">
+          </div>
+          
+          <div class="form-group full-width">
+            <label>Slogan</label>
+            <input type="text" id="company_slogan" placeholder="Ihre Digitale Zukunft - Intelligent Automatisiert">
+          </div>
+        </div>
+      </div>
+      
+      <!-- SEO Einstellungen -->
+      <div class="settings-section">
+        <h2 class="section-title">SEO & Meta-Tags</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Meta Titel</label>
+            <input type="text" id="meta_title" placeholder="Binso - KI & Automatisierung für Schweizer KMUs">
+          </div>
+          
+          <div class="form-group full-width">
+            <label>Meta Beschreibung</label>
+            <textarea id="meta_description" placeholder="Professionelle KI-Integration..."></textarea>
+          </div>
+          
+          <div class="form-group full-width">
+            <label>Meta Keywords (kommasepariert)</label>
+            <input type="text" id="meta_keywords" placeholder="KI Chatbot Schweiz, WhatsApp Automatisierung...">
+          </div>
+          
+          <div class="form-group">
+            <label>Meta Author</label>
+            <input type="text" id="meta_author" placeholder="Binso GmbH">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Social Media -->
+      <div class="settings-section">
+        <h2 class="section-title">Social Media Links</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Facebook</label>
+            <input type="url" id="social_facebook" placeholder="https://facebook.com/binso">
+          </div>
+          
+          <div class="form-group">
+            <label>Instagram</label>
+            <input type="url" id="social_instagram" placeholder="https://instagram.com/binso">
+          </div>
+          
+          <div class="form-group">
+            <label>LinkedIn</label>
+            <input type="url" id="social_linkedin" placeholder="https://linkedin.com/company/binso">
+          </div>
+          
+          <div class="form-group">
+            <label>Twitter</label>
+            <input type="url" id="social_twitter" placeholder="https://twitter.com/binso">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sprach-Einstellungen -->
+      <div class="settings-section">
+        <h2 class="section-title">Sprach-Einstellungen</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Standardsprache</label>
+            <select id="default_language">
+              <option value="de">Deutsch</option>
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="it">Italiano</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Verfügbare Sprachen (kommasepariert)</label>
+            <input type="text" id="available_languages" placeholder="de,en,fr">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Funktionen -->
+      <div class="settings-section">
+        <h2 class="section-title">Funktionen & Features</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="header_visible">
+              <label>Header anzeigen</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="footer_visible">
+              <label>Footer anzeigen</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="chatbot_enabled">
+              <label>Chatbot aktivieren</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="maintenance_mode">
+              <label>Wartungsmodus aktivieren</label>
+            </div>
+          </div>
+          
+          <div class="form-group full-width">
+            <label>Wartungsmodus Nachricht</label>
+            <textarea id="maintenance_message" placeholder="Die Webseite wird gerade gewartet..."></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tracking & Analytics -->
+      <div class="settings-section">
+        <h2 class="section-title">Tracking & Analytics</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Google Analytics ID</label>
+            <input type="text" id="google_analytics_id" placeholder="G-XXXXXXXXXX">
+          </div>
+          
+          <div class="form-group">
+            <label>Google Tag Manager ID</label>
+            <input type="text" id="google_tag_manager_id" placeholder="GTM-XXXXXXX">
+          </div>
+          
+          <div class="form-group">
+            <label>Facebook Pixel ID</label>
+            <input type="text" id="facebook_pixel_id" placeholder="XXXXXXXXXXXXXXX">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Rechtliches -->
+      <div class="settings-section">
+        <h2 class="section-title">Rechtliche Links</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Datenschutz URL</label>
+            <input type="url" id="privacy_policy_url" placeholder="/datenschutz">
+          </div>
+          
+          <div class="form-group">
+            <label>AGB URL</label>
+            <input type="url" id="terms_url" placeholder="/agb">
+          </div>
+          
+          <div class="form-group">
+            <label>Impressum URL</label>
+            <input type="url" id="imprint_url" placeholder="/impressum">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      
+      sidebar.classList.toggle('expanded');
+      mainContent.classList.toggle('shifted');
+      
+      localStorage.setItem('sidebarExpanded', sidebar.classList.contains('expanded'));
+    }
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      const isExpanded = localStorage.getItem('sidebarExpanded') === 'true';
+      if (isExpanded && window.innerWidth > 768) {
+        document.getElementById('sidebar').classList.add('expanded');
+        document.getElementById('mainContent').classList.add('shifted');
+      }
+      
+      loadSettings();
+    });
+    
+    function logout() {
+      document.cookie = 'admin-session=; Max-Age=0; path=/';
+      window.location.href = '/admin/login';
+    }
+    
+    async function loadSettings() {
+      try {
+        const response = await fetch('/api/admin/settings');
+        const data = await response.json();
+        
+        // Firmeninformationen
+        document.getElementById('company_name').value = data.company_name || '';
+        document.getElementById('company_email').value = data.company_email || '';
+        document.getElementById('company_phone').value = data.company_phone || '';
+        document.getElementById('company_address').value = data.company_address || '';
+        document.getElementById('company_slogan').value = data.company_slogan || '';
+        
+        // SEO
+        document.getElementById('meta_title').value = data.meta_title || '';
+        document.getElementById('meta_description').value = data.meta_description || '';
+        document.getElementById('meta_keywords').value = data.meta_keywords || '';
+        document.getElementById('meta_author').value = data.meta_author || '';
+        
+        // Social Media
+        document.getElementById('social_facebook').value = data.social_facebook || '';
+        document.getElementById('social_instagram').value = data.social_instagram || '';
+        document.getElementById('social_linkedin').value = data.social_linkedin || '';
+        document.getElementById('social_twitter').value = data.social_twitter || '';
+        
+        // Sprachen
+        document.getElementById('default_language').value = data.default_language || 'de';
+        document.getElementById('available_languages').value = data.available_languages || '';
+        
+        // Funktionen
+        document.getElementById('header_visible').checked = data.header_visible !== false;
+        document.getElementById('footer_visible').checked = data.footer_visible !== false;
+        document.getElementById('chatbot_enabled').checked = data.chatbot_enabled !== false;
+        document.getElementById('maintenance_mode').checked = data.maintenance_mode === true;
+        document.getElementById('maintenance_message').value = data.maintenance_message || '';
+        
+        // Tracking
+        document.getElementById('google_analytics_id').value = data.google_analytics_id || '';
+        document.getElementById('google_tag_manager_id').value = data.google_tag_manager_id || '';
+        document.getElementById('facebook_pixel_id').value = data.facebook_pixel_id || '';
+        
+        // Rechtliches
+        document.getElementById('privacy_policy_url').value = data.privacy_policy_url || '';
+        document.getElementById('terms_url').value = data.terms_url || '';
+        document.getElementById('imprint_url').value = data.imprint_url || '';
+        
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+    
+    async function saveSettings() {
+      const saveBtn = document.querySelector('.save-btn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Wird gespeichert...';
+      
+      const settings = {
+        company_name: document.getElementById('company_name').value,
+        company_email: document.getElementById('company_email').value,
+        company_phone: document.getElementById('company_phone').value,
+        company_address: document.getElementById('company_address').value,
+        company_slogan: document.getElementById('company_slogan').value,
+        
+        meta_title: document.getElementById('meta_title').value,
+        meta_description: document.getElementById('meta_description').value,
+        meta_keywords: document.getElementById('meta_keywords').value,
+        meta_author: document.getElementById('meta_author').value,
+        
+        social_facebook: document.getElementById('social_facebook').value,
+        social_instagram: document.getElementById('social_instagram').value,
+        social_linkedin: document.getElementById('social_linkedin').value,
+        social_twitter: document.getElementById('social_twitter').value,
+        
+        default_language: document.getElementById('default_language').value,
+        available_languages: document.getElementById('available_languages').value,
+        
+        header_visible: document.getElementById('header_visible').checked,
+        footer_visible: document.getElementById('footer_visible').checked,
+        chatbot_enabled: document.getElementById('chatbot_enabled').checked,
+        maintenance_mode: document.getElementById('maintenance_mode').checked,
+        maintenance_message: document.getElementById('maintenance_message').value,
+        
+        google_analytics_id: document.getElementById('google_analytics_id').value,
+        google_tag_manager_id: document.getElementById('google_tag_manager_id').value,
+        facebook_pixel_id: document.getElementById('facebook_pixel_id').value,
+        
+        privacy_policy_url: document.getElementById('privacy_policy_url').value,
+        terms_url: document.getElementById('terms_url').value,
+        imprint_url: document.getElementById('imprint_url').value,
+      };
+      
+      try {
+        const response = await fetch('/api/admin/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings)
+        });
+        
+        if (response.ok) {
+          document.getElementById('successMessage').classList.add('show');
+          setTimeout(() => {
+            document.getElementById('successMessage').classList.remove('show');
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('Error saving settings:', error);
+        alert('Fehler beim Speichern der Einstellungen');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Änderungen speichern';
+      }
+    }
+  </script>
+</body>
+</html>
